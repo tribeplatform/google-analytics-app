@@ -1,0 +1,58 @@
+{%- if settings.measurementId and settings.measurementId.size > 0 -%}
+  {%- assign measurementChar = settings.measurementId | slice: 0 -%}
+  {%- assign isNew = measurementChar == "G" -%}
+  {%- if isNew -%}
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id={{ settings.measurementId }}"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', '{{- settings.measurementId -}}', { {% if anonymize %}'anonymize_ip': true,{% endif %} 'send_page_view': false });
+      gtag('set', {'user_id': '{{ member.id }}'});
+      function onPageView(data) {
+        gtag('event', 'page_view', {
+          page_title: data.title,
+          page_path: data.page,
+        });
+      }
+      if (window.Tribe) {
+        window.Tribe.on('pageView', onPageView);
+      }
+    </script>
+  {%- endif -%} {%- unless isNew -%}
+    <script>
+      (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function() {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', '{{ settings.measurementId }}', 'auto');
+      {% if anonymize -%}
+        ga('set', 'anonymizeIp', true);
+      {% endif -%}
+      ga('set', 'userId', '{{ member.id }}');
+      function onPageView(data) {
+        ga('send', {
+          'hitType': 'pageview',
+          'page': data.page,
+          'title': data.title,
+        });
+      }
+      if (window.Tribe) {
+        window.Tribe.on('pageView', onPageView);
+      }
+    </script>
+  {%- endunless -%}
+{%- endif -%}
