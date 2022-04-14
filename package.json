@@ -1,5 +1,5 @@
 {
-  "name": "../apps/",
+  "name": "@tribeplatform/google-analytics-app",
   "version": "0.0.0",
   "description": "TypeScript + Mongoose + MongoDB + Express API Server",
   "private": "true",
