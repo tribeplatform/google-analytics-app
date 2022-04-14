@@ -4,6 +4,9 @@ import { Types } from '@tribeplatform/gql-client';
 import { logger } from '@/utils/logger';
 
 const DEFAULT_SETTINGS = {}
+// Measurement IDs can either be in the form of (Y = number, X = alphanumeric)
+// UA-YYYYY-YYYY or G-XXXXXX for arbitrary amounts of X and Y
+const MEASUREMENT_ID_REGEX = /^(UA-\d+-\d+|G-[A-Z0-9]+)$/
 
 class WebhookController {
   public index = async (req: Request, res: Response, next: NextFunction) => {
@@ -80,6 +83,21 @@ class WebhookController {
    * TODO: Elaborate on this function
    */
   private async updateSettings(input) {
+    if (!input.data.settings?.measurementId) {
+      return {
+        type: input.type,
+        status: 'FAILED',
+        errorCode: 'MISSING_PARAMETER',
+        errorMessage: `Missing required parameter measurementId.`,
+      }
+    } else if (!MEASUREMENT_ID_REGEX.test(input.data.settings?.measurementId)) {
+      return {
+        type: input.type,
+        status: 'FAILED',
+        errorCode: 'INVALID_PARAMETER',
+        errorMessage: `Measurement ID is in an invalid format.`,
+      }
+    }
     return {
       type: input.type,
       status: 'SUCCEEDED',
