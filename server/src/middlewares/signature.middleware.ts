@@ -8,13 +8,14 @@ import { verifySignature } from '@/utils/signature';
 const signatureMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const timestamp = parseInt(req.header('x-tribe-request-timestamp'), 10);
   const signature = req.header('x-tribe-signature');
-  const rawBody = req['rawBody']
+  const rawBody = req['rawBody'];
   try {
+    console.log('SIGNING_SECRET', SIGNING_SECRET);
     if (rawBody && verifySignature({ body: rawBody, timestamp, secret: SIGNING_SECRET, signature })) {
       return next();
     }
   } catch (err) {
-      logger.error(err)
+    logger.error(err);
   }
   return next(new HttpException(403, 'The x-tribe-signature is not valid.'));
 };
