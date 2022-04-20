@@ -10,7 +10,6 @@ const signatureMiddleware = (req: Request, res: Response, next: NextFunction) =>
   const signature = req.header('x-tribe-signature');
   const rawBody = req['rawBody'];
   try {
-    console.log('SIGNING_SECRET', SIGNING_SECRET);
     if (rawBody && verifySignature({ body: rawBody, timestamp, secret: SIGNING_SECRET, signature })) {
       return next();
     }
