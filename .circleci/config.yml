@@ -72,6 +72,7 @@ workflows:
             branches:
               only:
                 - master
+                - dev
       - publish-dev:
           context: App
           requires:
@@ -80,6 +81,7 @@ workflows:
             branches:
               only:
                 - master
+                - dev
       - hold:
           type: approval
           requires:
